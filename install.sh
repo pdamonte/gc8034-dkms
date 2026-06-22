@@ -2,7 +2,7 @@
 set -euo pipefail
 
 PACKAGE_NAME=gc8034-dkms
-PACKAGE_VERSION=0.1
+PACKAGE_VERSION=0.1.1
 MODULE_NAME=gc8034
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DKMS_SRC="/usr/src/${PACKAGE_NAME}-${PACKAGE_VERSION}"
