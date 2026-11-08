@@ -1,5 +1,10 @@
 # GC8034 / GCTI8034 DKMS driver
 
+> **Note:** the driver in this repo reports front/rear facing swapped on the
+> Chuwi Hi10 Max (GC8034 is the rear camera). Updated sources live in
+> [gc-cameras-akmod](https://github.com/pdamonte/gc-cameras-akmod)
+> (`src/gc-cameras-0.2/`), which Fedora users should install instead.
+
 Linux DKMS package for the GalaxyCore GC8034-compatible sensor exposed on this
 machine as ACPI HID `GCTI8034`.
 
