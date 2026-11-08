@@ -2420,13 +2420,14 @@ static int gc8034_initialize_controls(struct gc8034 *gc8034)
 {
 	const struct gc8034_mode *mode;
 	struct v4l2_ctrl_handler *handler;
+	struct v4l2_ctrl *ctrl;
 	s64 exposure_max, vblank_def;
 	u32 h_blank;
 	int ret;
 
 	handler = &gc8034->ctrl_handler;
 	mode = gc8034->cur_mode;
-	ret = v4l2_ctrl_handler_init(handler, 8);
+	ret = v4l2_ctrl_handler_init(handler, 10);
 	if (ret)
 		return ret;
 	handler->lock = &gc8034->mutex;
@@ -2460,6 +2461,21 @@ static int gc8034_initialize_controls(struct gc8034 *gc8034)
 				V4L2_CID_ANALOGUE_GAIN, GC8034_GAIN_MIN,
 				GC8034_GAIN_MAX, GC8034_GAIN_STEP,
 				GC8034_GAIN_DEFAULT);
+
+	ctrl = v4l2_ctrl_new_std_menu(handler, NULL,
+				      V4L2_CID_CAMERA_ORIENTATION,
+				      V4L2_CAMERA_ORIENTATION_EXTERNAL, 0,
+				      strcmp(gc8034->module_facing, "back") ?
+				      V4L2_CAMERA_ORIENTATION_FRONT :
+				      V4L2_CAMERA_ORIENTATION_BACK);
+	if (ctrl)
+		ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+
+	ctrl = v4l2_ctrl_new_std(handler, NULL, V4L2_CID_CAMERA_SENSOR_ROTATION,
+				 0, 0, 1, 0);
+	if (ctrl)
+		ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+
 	if (handler->error) {
 		ret = handler->error;
 		dev_err(&gc8034->client->dev,
@@ -2610,8 +2626,9 @@ static int gc8034_probe(struct i2c_client *client)
 			return -EINVAL;
 		}
 	} else {
+		/* Chuwi Hi10 Max: the 8MP GC8034 is the rear camera. */
 		gc8034->module_index = 1;
-		gc8034->module_facing = "front";
+		gc8034->module_facing = "back";
 		gc8034->module_name = "gcti8034";
 		gc8034->len_name = "default";
 	}
